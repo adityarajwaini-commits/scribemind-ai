@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const PDFDocument = require('pdfkit/js/pdfkit.standalone.js');
 import path from 'path';
-import fs from 'fs';
+import { existsSync } from 'fs';
 
 const LINE_H = 25.5;
 const M_LEFT = 79;
@@ -46,8 +46,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Text cannot be empty' }, { status: 400 });
     }
 
-    const fontPath = path.join(process.cwd(), 'public', 'fonts', 'Caveat-Regular.ttf');
-    const hasCaveat = fs.existsSync(fontPath);
+    const fontPath = path.join(process.cwd(), 'public/fonts/Caveat-Regular.ttf');
+    const hasCaveat = existsSync(fontPath);
 
     const chunks: Buffer[] = [];
 
@@ -63,10 +63,10 @@ export async function POST(request: Request) {
       doc.on('error', reject);
 
       if (hasCaveat) {
-        doc.registerFont('Caveat', fontPath);
+        doc.font(fontPath);
       }
 
-      const fontName = hasCaveat ? 'Caveat' : 'Courier';
+      const fontName = hasCaveat ? fontPath : 'Courier';
       const fontSize = hasCaveat ? 14 : 10;
 
       let cy = M_TOP + 2;
