@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import PDFDocument from 'pdfkit';
+
+// ✅ Use standalone version (fixes Helvetica.afm error)
+const PDFDocument = require('pdfkit/js/pdfkit.standalone.js');
 
 export const runtime = 'nodejs';
 
@@ -50,12 +52,12 @@ export async function POST(request: Request) {
         margins: { top: M_TOP, bottom: 45, left: M_LEFT, right: 57 },
       });
 
-      doc.on('data', (chunk) => chunks.push(chunk));
+      doc.on('data', (chunk: Buffer) => chunks.push(chunk));
       doc.on('end', resolve);
       doc.on('error', reject);
 
-      // ✅ Use built-in safe font (NO external files needed)
-      doc.font('Times-Roman').fontSize(12);
+      // ✅ Safe font (no external dependency)
+      doc.font('Helvetica').fontSize(12);
 
       let cy = M_TOP + 2;
 
