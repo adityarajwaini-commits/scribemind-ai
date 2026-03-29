@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const PDFDocument = require('pdfkit');
+import PDFDocument from 'pdfkit';
 import path from 'path';
-import fs from 'fs';
 
 export const runtime = 'nodejs';
 
@@ -23,7 +21,6 @@ function cleanMarkdown(text: string): string {
     .trim();
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function drawNotebookPage(doc: any) {
   // Cream background
   doc.rect(0, 0, PAGE_W, PAGE_H).fill('#FFFCEE');
@@ -48,9 +45,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Text cannot be empty' }, { status: 400 });
     }
 
-    const fontPath = path.join(process.cwd(), 'public', 'fonts', 'Caveat-Regular.ttf');
-    const hasCaveat = fs.existsSync(fontPath);
-
     const chunks: Buffer[] = [];
 
     await new Promise<void>((resolve, reject) => {
@@ -64,12 +58,8 @@ export async function POST(request: Request) {
       doc.on('end', resolve);
       doc.on('error', reject);
 
-      if (hasCaveat) {
-        doc.registerFont('Caveat', fontPath);
-      }
-
-      const fontName = hasCaveat ? 'Caveat' : 'Courier';
-      const fontSize = hasCaveat ? 14 : 10;
+      const fontName = 'Courier';
+      const fontSize = 10;
 
       let cy = M_TOP + 2;
 
@@ -99,7 +89,6 @@ export async function POST(request: Request) {
           continue;
         }
 
-        // Measure and word-wrap manually
         doc.font(fontName).fontSize(fontSize);
         const words = trimmed.split(' ');
         let bufLine = '';
@@ -121,7 +110,11 @@ export async function POST(request: Request) {
     });
 
     const pdfBuffer = Buffer.concat(chunks);
-    const safe = (topic || 'assignment').replace(/[^\w\s-]/g, '').slice(0, 30).trim().replace(/\s+/g, '_');
+    const safe = (topic || 'assignment')
+      .replace(/[^\w\s-]/g, '')
+      .slice(0, 30)
+      .trim()
+      .replace(/\s+/g, '_');
 
     return new Response(pdfBuffer, {
       headers: {
