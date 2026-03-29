@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import PDFDocument from 'pdfkit';
-import path from 'path';
 
 export const runtime = 'nodejs';
 
@@ -22,16 +21,16 @@ function cleanMarkdown(text: string): string {
 }
 
 function drawNotebookPage(doc: any) {
-  // Cream background
+  // Background
   doc.rect(0, 0, PAGE_W, PAGE_H).fill('#FFFCEE');
 
-  // Horizontal ruled lines
+  // Lines
   doc.strokeColor('#B0D5E6').lineWidth(0.85);
   for (let y = M_TOP; y < PAGE_H - 45; y += LINE_H) {
     doc.moveTo(0, y).lineTo(PAGE_W, y).stroke();
   }
 
-  // Red margin line
+  // Margin line
   doc.strokeColor('#CD5C5C').lineWidth(1.7);
   doc.moveTo(M_LEFT - 6, 0).lineTo(M_LEFT - 6, PAGE_H).stroke();
 }
@@ -58,8 +57,11 @@ export async function POST(request: Request) {
       doc.on('end', resolve);
       doc.on('error', reject);
 
-      const fontName = 'Courier';
-      const fontSize = 10;
+      // ✅ FIX: force built-in font to avoid Helvetica.afm error
+      doc.font('Times-Roman');
+
+      const fontName = 'Times-Roman';
+      const fontSize = 12;
 
       let cy = M_TOP + 2;
 
@@ -83,6 +85,7 @@ export async function POST(request: Request) {
 
       for (const para of paragraphs) {
         const trimmed = para.trim();
+
         if (!trimmed) {
           cy += LINE_H;
           if (cy >= PAGE_H - 60) addPage();
@@ -96,6 +99,7 @@ export async function POST(request: Request) {
         for (const word of words) {
           const test = bufLine ? `${bufLine} ${word}` : word;
           const w = doc.widthOfString(test);
+
           if (w <= TXT_W) {
             bufLine = test;
           } else {
@@ -103,6 +107,7 @@ export async function POST(request: Request) {
             bufLine = word;
           }
         }
+
         if (bufLine) writeLine(bufLine);
       }
 
@@ -110,6 +115,7 @@ export async function POST(request: Request) {
     });
 
     const pdfBuffer = Buffer.concat(chunks);
+
     const safe = (topic || 'assignment')
       .replace(/[^\w\s-]/g, '')
       .slice(0, 30)
@@ -122,6 +128,7 @@ export async function POST(request: Request) {
         'Content-Disposition': `attachment; filename="${safe}_handwritten.pdf"`,
       },
     });
+
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'PDF creation failed';
     return NextResponse.json({ error: message }, { status: 500 });
