@@ -5,6 +5,10 @@ const nextConfig = {
       'node_modules/pdfkit/js/data/**',
       'public/fonts/Caveat-Regular.ttf',
     ],
+    '/app/api/download/handwritten/route': [
+      'node_modules/pdfkit/js/data/**',
+      'public/fonts/Caveat-Regular.ttf',
+    ],
   },
   images: {
     remotePatterns: [
