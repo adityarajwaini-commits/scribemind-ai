@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import PDFDocument from 'pdfkit';
+import path from 'path';
 
 export const runtime = 'nodejs';
 
@@ -21,16 +22,13 @@ function cleanMarkdown(text: string): string {
 }
 
 function drawNotebookPage(doc: any) {
-  // Background
   doc.rect(0, 0, PAGE_W, PAGE_H).fill('#FFFCEE');
 
-  // Lines
   doc.strokeColor('#B0D5E6').lineWidth(0.85);
   for (let y = M_TOP; y < PAGE_H - 45; y += LINE_H) {
     doc.moveTo(0, y).lineTo(PAGE_W, y).stroke();
   }
 
-  // Margin line
   doc.strokeColor('#CD5C5C').lineWidth(1.7);
   doc.moveTo(M_LEFT - 6, 0).lineTo(M_LEFT - 6, PAGE_H).stroke();
 }
@@ -57,11 +55,10 @@ export async function POST(request: Request) {
       doc.on('end', resolve);
       doc.on('error', reject);
 
-      // ✅ FIX: force built-in font to avoid Helvetica.afm error
-      doc.font('Times-Roman');
-
-      const fontName = 'Times-Roman';
-      const fontSize = 12;
+      // ✅ EMBED FONT FROM PUBLIC FOLDER (WORKS ON VERCEL)
+      const fontPath = path.join(process.cwd(), 'public/fonts/Caveat-Regular.ttf');
+      doc.registerFont('Custom', fontPath);
+      doc.font('Custom').fontSize(14);
 
       let cy = M_TOP + 2;
 
@@ -73,7 +70,7 @@ export async function POST(request: Request) {
 
       function writeLine(lineText: string) {
         if (cy >= PAGE_H - 60) addPage();
-        doc.font(fontName).fontSize(fontSize).fillColor('#0F2D8C');
+        doc.fillColor('#0F2D8C');
         doc.text(lineText, M_LEFT, cy, { width: TXT_W, lineBreak: false });
         cy += LINE_H;
       }
@@ -92,7 +89,6 @@ export async function POST(request: Request) {
           continue;
         }
 
-        doc.font(fontName).fontSize(fontSize);
         const words = trimmed.split(' ');
         let bufLine = '';
 
