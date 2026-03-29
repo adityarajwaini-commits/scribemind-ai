@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import PDFDocument from 'pdfkit';
-import path from 'path';
 
 export const runtime = 'nodejs';
 
@@ -55,10 +54,8 @@ export async function POST(request: Request) {
       doc.on('end', resolve);
       doc.on('error', reject);
 
-      // ✅ EMBED FONT FROM PUBLIC FOLDER (WORKS ON VERCEL)
-      const fontPath = path.join(process.cwd(), 'public/fonts/Caveat-Regular.ttf');
-      doc.registerFont('Custom', fontPath);
-      doc.font('Custom').fontSize(14);
+      // ✅ Use built-in safe font (NO external files needed)
+      doc.font('Times-Roman').fontSize(12);
 
       let cy = M_TOP + 2;
 
