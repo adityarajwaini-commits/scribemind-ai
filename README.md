@@ -9,45 +9,6 @@ AI-powered academic assignment generator with Word (.docx) and handwritten noteb
 npm install
 # or
 yarn install
-```
-
-### 2. Set up environment variables
-Copy `.env.example` to `.env.local` and fill in your Groq API key:
-```bash
-cp .env.example .env.local
-```
-
-Edit `.env.local`:
-```
-GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=llama-3.3-70b-versatile
-```
-
-**Get a free Groq API key at:** https://console.groq.com/keys
-
-### 3. Run development server
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
----
-
-## Deploy to Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Go to [vercel.com](https://vercel.com) and import your repository
-3. Add environment variables:
-   - `GROQ_API_KEY` = your Groq API key
-   - `GROQ_MODEL` = `llama-3.3-70b-versatile`
-4. Click **Deploy**
-
-That's it! Your site will be live in ~2 minutes.
-
----
 
 ## Project Structure
 
