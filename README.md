@@ -47,24 +47,45 @@ AI-powered academic assignment generator with **Word (.docx)** and **handwritten
 ---
 
 ## 📁 Project Structure
+## 📁 Project Structure
 
+```
 scribemind-ai/
 ├── app/
 │   ├── api/
-│   │   ├── generate/route.ts
-│   │   ├── humanize/route.ts
+│   │   ├── generate/
+│   │   │   └── route.ts
+│   │   ├── humanize/
+│   │   │   └── route.ts
 │   │   └── download/
-│   │       ├── word/route.ts
-│   │       └── handwritten/route.ts
+│   │       ├── word/
+│   │       │   └── route.ts
+│   │       └── handwritten/
+│   │           └── route.ts
 │   ├── globals.css
 │   ├── layout.tsx
 │   └── page.tsx
+│
 ├── components/
-├── public/fonts/
+│   ├── Navbar.tsx
+│   ├── Hero.tsx
+│   ├── Features.tsx
+│   ├── Generator.tsx
+│   ├── HowItWorks.tsx
+│   ├── Testimonials.tsx
+│   ├── Footer.tsx
+│   └── BackgroundCanvas.tsx
+│
+├── public/
+│   └── fonts/
+│       └── Caveat-Regular.ttf
+│
 ├── .env.example
 ├── next.config.js
 ├── tailwind.config.js
 └── package.json
+```
+
 
 ---
 
